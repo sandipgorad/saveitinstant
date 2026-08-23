@@ -1,132 +1,266 @@
 # SaveitInstant — YouTube Thumbnail Downloader
 
-A production-ready YouTube thumbnail downloader built with React, Vite, Tailwind CSS,
-and React Router.
+[SaveitInstant](https://saveitinstant.site) is a fast, simple, and free YouTube thumbnail downloader that lets users extract and download available thumbnail images from YouTube videos and Shorts.
 
-## Getting started
+Built with **React, Vite, Tailwind CSS, and React Router**, with a focus on speed, simplicity, accessibility, and SEO.
+
+## 🌐 Live Website
+
+**https://saveitinstant.site**
+
+---
+
+## ✨ Features
+
+* Download YouTube video thumbnails in available resolutions
+* Supports standard YouTube videos
+* Supports YouTube Shorts
+* Extract thumbnails directly from YouTube URLs
+* Copy thumbnail URLs
+* Responsive design for desktop and mobile
+* Fast, lightweight client-side experience
+* SEO-optimized informational pages
+* No account or registration required
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+* Node.js 18+
+* npm
+
+### Installation
+
+Clone the repository and install dependencies:
 
 ```bash
+git clone https://github.com/sandipgorad/saveitinstant.git
+cd saveitinstant
 npm install
+```
+
+### Development
+
+Start the local development server:
+
+```bash
 npm run dev
 ```
 
-Open the printed local URL (usually http://localhost:5173).
+The application will normally be available at:
 
-## Build for production
+`http://localhost:5173`
+
+---
+
+## 📦 Production Build
+
+Create an optimized production build:
 
 ```bash
 npm run build
 ```
 
-Output goes to `dist/`. Preview it locally with:
+The generated files are placed in:
+
+```text
+dist/
+```
+
+To preview the production build locally:
 
 ```bash
 npm run preview
 ```
 
-## Routes
+---
 
-```
-/                                     Homepage + downloader
-/youtube-thumbnail-downloader         Dedicated downloader landing page
-/youtube-thumbnail-sizes              Thumbnail dimensions/format guide
-/youtube-thumbnail-url                Video ID → thumbnail URL explainer
-/youtube-shorts-thumbnail             Shorts-specific downloader page
-/how-to-download-youtube-thumbnail    Tutorial (desktop/Android/iPhone/Shorts)
-/faq                                  FAQ (with FAQPage structured data)
-/blog                                 Resource index linking the 4 guides above
-/about                                About SaveitInstant
-/contact                              Contact (mailto — no fake form)
-/privacy                              Privacy policy
-/terms                                Terms of use
-*                                     404 page
-```
+## 🗺️ Routes
 
-## ⚠️ Deployment: SPA fallback required
+| Route                                | Description                                   |
+| ------------------------------------ | --------------------------------------------- |
+| `/`                                  | Homepage and thumbnail downloader             |
+| `/youtube-thumbnail-downloader`      | Dedicated YouTube thumbnail downloader        |
+| `/youtube-thumbnail-sizes`           | YouTube thumbnail dimensions and format guide |
+| `/youtube-thumbnail-url`             | Video ID and thumbnail URL guide              |
+| `/youtube-shorts-thumbnail`          | YouTube Shorts thumbnail downloader           |
+| `/how-to-download-youtube-thumbnail` | YouTube thumbnail download tutorial           |
+| `/faq`                               | Frequently asked questions                    |
+| `/blog`                              | Resource and guide index                      |
+| `/about`                             | About SaveitInstant                           |
+| `/contact`                           | Contact information                           |
+| `/privacy`                           | Privacy policy                                |
+| `/terms`                             | Terms of use                                  |
+| `*`                                  | Custom 404 page                               |
 
-This is a client-side-routed single-page app. Your host must serve `index.html` for
-**every** route (not just `/`), or a direct visit or refresh on `/faq`, `/blog`, etc.
-will 404 at the server level before React Router ever runs.
+---
 
-Included out of the box:
+## 🧱 Technology Stack
 
-- **Netlify**: `public/_redirects` (already present — `/* /index.html 200`)
-- **Vercel**: `vercel.json` (already present)
+* **React** — UI library
+* **Vite** — Frontend build tool
+* **Tailwind CSS** — Styling
+* **React Router** — Client-side routing
+* **Lucide React** — Icons
 
-Configure manually if you're on something else:
+The downloader runs primarily on the client side and does not require users to create an account.
 
-- **Nginx**: `try_files $uri /index.html;`
-- **Apache**: an `.htaccess` rewrite to `index.html`
+---
 
-## SEO notes
+## 📁 Project Structure
 
-- Per-route `<title>`, meta description, canonical URL, and Open Graph/Twitter tags
-  are set client-side by `src/components/Seo.jsx` (no extra dependency). This is
-  read correctly by Googlebot (which executes JS), but bots that only read the raw
-  HTML response (some social-preview scrapers) will see the homepage's static tags
-  from `index.html` regardless of route. If that matters for your use case, the
-  fix is prerendering or SSR (e.g. a static-site generator, or a prerendering
-  service) — out of scope for this pass since it would mean changing the framework.
-- `public/sitemap.xml` and `public/robots.txt` list only the 12 real routes above.
-- Update `https://saveitinstant.site` throughout (`index.html`, `src/config/site.js`,
-  `public/robots.txt`, `public/sitemap.xml`) if the real domain differs.
-- `public/og-cover.png` is a real generated image, not a placeholder — regenerate
-  it if the brand copy changes.
-
-## Project structure
-
-```
+```text
 src/
-  pages/            One component per route
-  components/       Shared UI (Navbar, Footer, Layout, Seo, ThumbnailDownloader, ...)
-  config/
-    site.js         SITE_URL, SITE_NAME, contact email
-    routes.js       Central path registry used by nav, links, and pages
-  data/
-    faqs.js         Single source of truth for FAQ content
-  utils/
-    youtube.js      URL validation, video ID extraction, thumbnail URL builder
-    download.js     Blob-based download helper + image availability check
+├── pages/              Route-level page components
+├── components/         Shared UI components
+├── config/
+│   ├── site.js         Site configuration and contact information
+│   └── routes.js       Central route registry
+├── data/
+│   └── faqs.js         FAQ content
+└── utils/
+    ├── youtube.js      YouTube URL validation and thumbnail URL generation
+    └── download.js     Thumbnail download and availability helpers
+
 public/
-  robots.txt
-  sitemap.xml
-  og-cover.png
-  favicon.svg
+├── robots.txt
+├── sitemap.xml
+├── og-cover.png
+└── favicon.svg
 ```
 
-## Before deploying
+---
 
-- Set up real mail delivery for the contact address in `src/config/site.js`
-  (`saveitinstant@gmail.com` by default).
-- Configure SPA fallback on your host (see above) — without it, every route
-  except `/` will 404.
-- Swap in the real domain if it isn't `saveitinstant.site`.
+## 🔎 SEO
 
-## Notes on the download flow
+SaveitInstant includes:
 
-Downloading a cross-origin image only works when the image host sends
-permissive CORS headers. `i.ytimg.com` generally does, so the app downloads the
-file directly as a blob. If a browser or network blocks that, the app falls
-back to opening the image in a new tab so the user can still save it manually.
+* Per-route page titles
+* Meta descriptions
+* Canonical URLs
+* Open Graph metadata
+* Twitter/X metadata
+* `robots.txt`
+* XML sitemap
+* FAQ structured data
+* Dedicated SEO-focused landing pages and guides
 
-## Pre-launch checks
+The production domain is configured as:
 
-Run these locally or in CI before deploying:
+```text
+https://saveitinstant.site
+```
+
+If the domain changes in the future, update the site configuration, canonical URLs, sitemap, and robots configuration accordingly.
+
+---
+
+## 🔀 SPA Routing & Deployment
+
+SaveitInstant is a client-side routed single-page application.
+
+The hosting provider must serve `index.html` for application routes so that direct visits and page refreshes work correctly.
+
+### Vercel
+
+The repository includes:
+
+```text
+vercel.json
+```
+
+with the required SPA routing configuration.
+
+### Netlify
+
+The repository also includes:
+
+```text
+public/_redirects
+```
+
+for SPA fallback support.
+
+For other hosting providers, configure the server to rewrite application routes to:
+
+```text
+/index.html
+```
+
+---
+
+## ⬇️ Download Behavior
+
+SaveitInstant retrieves available YouTube thumbnail images and allows users to download them directly.
+
+When browser/network restrictions prevent a direct download, the application provides a fallback that opens the thumbnail so the user can save it manually.
+
+This behavior depends partly on browser security policies and the availability of the image host.
+
+---
+
+## 🧪 Testing & Pre-Deployment Checks
+
+Before deploying changes, run:
 
 ```bash
 npm ci
 npm run check
 ```
 
-`npm run check` runs the YouTube URL regression tests and a production Vite build.
+The check command validates the YouTube URL handling and creates a production build.
 
-Before launch, also verify the deployed site manually with:
-- a normal `youtube.com/watch?v=...` URL
-- a `youtu.be/...` URL
-- a Shorts URL
-- an invalid/non-YouTube URL
-- a video without an HD thumbnail
-- downloads on Chrome desktop and mobile Safari/Chrome
-- direct loading of every SPA route
-- `/robots.txt`, `/sitemap.xml`, and `/favicon.svg`
+### Manual verification
 
+Before releasing a significant update, verify:
+
+* Standard YouTube video URLs
+* `youtu.be` URLs
+* YouTube Shorts URLs
+* YouTube Live URLs
+* Invalid or non-YouTube URLs
+* Videos without an available HD thumbnail
+* Thumbnail downloads on desktop browsers
+* Thumbnail downloads on mobile browsers
+* Direct loading of every important route
+* `/robots.txt`
+* `/sitemap.xml`
+* `/favicon.svg`
+
+---
+
+## 📧 Contact
+
+For questions, bug reports, feedback, or suggestions:
+
+**Email:** [saveitinstant@gmail.com](mailto:saveitinstant@gmail.com)
+
+**X:** [@softwaredmind](https://x.com/softwaredmind)
+
+---
+
+## 📄 License
+
+This project is proprietary unless otherwise stated.
+
+The source code, branding, design, and website content are not licensed for redistribution or commercial reuse without permission from the project owner.
+
+---
+
+## ⚠️ Disclaimer
+
+SaveitInstant is an independent third-party utility and is not affiliated with, endorsed by, or sponsored by YouTube or Google.
+
+Users are responsible for ensuring that their use of downloaded content complies with applicable copyright laws, platform terms, and the rights of the content owner.
+
+---
+
+## 👤 Creator
+
+Built and maintained by **Sandip Gorad**.
+
+Website: **https://saveitinstant.site**
+
+X: **@softwaredmind**
