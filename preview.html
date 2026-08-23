@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>YouTube Thumbnail Downloader – Download HD Thumbnails</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          paper: '#F6F4EF',
+          ink: { DEFAULT: '#18160F', soft: '#3A3730', muted: '#6E6A60', faint: '#9B968A' },
+          line: '#E3DFD3',
+          linesoft: '#EDEAE0',
+          accent: { DEFAULT: '#1B5E56', dark: '#12433D', light: '#E7F0EE' },
+          error: '#B3261E',
+        },
+        fontFamily: {
+          sans: ['"IBM Plex Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+        },
+        maxWidth: { content: '1140px' },
+      }
+    }
+  }
+</script>
+<style>
+  body { background:#F6F4EF; color:#18160F; font-family:"IBM Plex Sans", sans-serif; }
+  ::selection { background:#1B5E56; color:#F6F4EF; }
+  :focus-visible { outline:2px solid #1B5E56; outline-offset:2px; }
+  details summary::-webkit-details-marker { display:none; }
+  .chev { transition: transform .2s ease; }
+  details[open] .chev { transform: rotate(180deg); }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(6px);} to { opacity:1; transform:translateY(0);} }
+  .fade-up { animation: fadeUp 220ms ease-out; }
+  @keyframes spin { to { transform: rotate(360deg);} }
+  .spin { animation: spin .7s linear infinite; }
+</style>
+</head>
+<body class="antialiased">
+
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:bg-ink focus:text-paper focus:px-3 focus:py-2 focus:text-sm">Skip to content</a>
+
+<header class="border-b border-line">
+  <div class="max-w-content mx-auto px-5 sm:px-6">
+    <div class="h-14 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2 shrink-0">
+        <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#18160F"/><path d="M9 16.5L14 21.5L23 10.5" stroke="#F6F4EF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="font-semibold text-[15px] tracking-tight">SaveitInstant</span>
+      </a>
+      <nav class="hidden sm:flex items-center gap-7">
+        <a href="#how-it-works" class="text-[14px] text-ink-soft hover:text-ink">How It Works</a>
+        <a href="#faq" class="text-[14px] text-ink-soft hover:text-ink">FAQ</a>
+        <a href="#more-tools" class="text-[14px] text-ink-soft hover:text-ink">Tools</a>
+      </nav>
+      <button id="menuBtn" class="sm:hidden p-2 -mr-2 text-ink-soft" aria-label="Open menu" aria-expanded="false">
+        <svg id="menuIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav id="mobileMenu" class="hidden sm:hidden border-t border-line bg-paper">
+    <div class="max-w-content mx-auto px-5 py-2 flex flex-col">
+      <a href="#how-it-works" class="py-3 text-[15px] text-ink-soft border-b border-linesoft">How It Works</a>
+      <a href="#faq" class="py-3 text-[15px] text-ink-soft border-b border-linesoft">FAQ</a>
+      <a href="#more-tools" class="py-3 text-[15px] text-ink-soft">Tools</a>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+  <!-- HERO / TOOL -->
+  <section class="px-5 sm:px-6 pt-10 sm:pt-14 pb-14 sm:pb-16">
+    <div class="max-w-content mx-auto">
+      <div class="max-w-[640px]">
+        <h1 class="text-[1.875rem] sm:text-[2.375rem] leading-tight font-semibold text-ink">Download YouTube Thumbnails</h1>
+        <p class="mt-3 text-[15.5px] sm:text-base text-ink-muted leading-relaxed">Paste a YouTube video or Shorts link and get the thumbnail in seconds.</p>
+      </div>
+
+      <div class="mt-7 max-w-[640px]">
+        <form id="toolForm">
+          <div id="inputWrap" class="flex flex-col sm:flex-row gap-2.5 rounded-lg border border-line bg-white p-2.5 shadow-[0_1px_2px_rgba(24,22,15,0.04),0_8px_24px_rgba(24,22,15,0.05)] focus-within:border-ink-soft transition-colors">
+            <div class="flex-1 flex items-center gap-2 px-2">
+              <label for="urlInput" class="sr-only">YouTube video URL</label>
+              <input id="urlInput" type="text" inputmode="url" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                placeholder="Paste YouTube video URL..."
+                class="w-full h-11 bg-transparent font-mono text-base sm:text-[14.5px] text-ink placeholder:text-ink-faint placeholder:font-sans outline-none" />
+            </div>
+            <div class="flex gap-2 shrink-0">
+              <button type="button" id="pasteBtn" class="h-11 px-3.5 inline-flex items-center gap-1.5 text-[13.5px] font-medium text-ink-soft border border-line rounded-md hover:bg-linesoft transition-colors">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+                Paste
+              </button>
+              <button type="submit" id="submitBtn" class="h-11 px-5 inline-flex items-center justify-center gap-2 text-[14px] font-medium text-paper bg-ink rounded-md hover:bg-ink-soft transition-colors">
+                <span id="submitLabel">Get Thumbnail</span>
+                <svg id="submitIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="mt-2.5 min-h-[20px]">
+            <p id="hintText" class="text-[13px] text-ink-faint">Works with YouTube videos and Shorts</p>
+            <p id="errorText" role="alert" class="text-[13px] text-error hidden"></p>
+          </div>
+        </form>
+
+        <div id="resultSection" class="mt-6 hidden fade-up">
+          <div class="flex items-baseline justify-between mb-3">
+            <h2 class="text-[13px] font-medium text-ink-muted uppercase tracking-wide">Thumbnail</h2>
+            <button id="copyBtn" class="inline-flex items-center gap-1.5 text-[13px] text-ink-soft hover:text-ink">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+              <span id="copyLabel">Copy image URL</span>
+            </button>
+          </div>
+          <div class="border border-line rounded-lg overflow-hidden bg-white">
+            <img id="previewImg" alt="" width="1280" height="720" class="w-full aspect-video object-cover" />
+          </div>
+          <div class="mt-4 border border-line rounded-lg overflow-hidden">
+            <div class="hidden sm:grid grid-cols-[1fr_1fr_auto] gap-4 px-4 py-2.5 border-b border-linesoft bg-linesoft/60 text-[12px] font-medium text-ink-muted uppercase tracking-wide">
+              <span>Quality</span><span>Size</span><span class="text-right">Action</span>
+            </div>
+            <ul id="resList"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works" class="px-5 sm:px-6 py-12 sm:py-14 border-t border-line">
+    <div class="max-w-content mx-auto">
+      <h2 class="text-[13px] font-medium text-ink-muted uppercase tracking-wide mb-6">How it works</h2>
+      <ol class="grid sm:grid-cols-3 gap-8 sm:gap-6">
+        <li class="flex gap-3.5 sm:block">
+          <span class="font-mono text-[13px] text-accent shrink-0 sm:block sm:mb-2">01</span>
+          <div><h3 class="text-[15px] font-medium text-ink">Copy the YouTube link</h3><p class="mt-1 text-[14px] text-ink-muted leading-relaxed">From the app, the browser bar, or the share menu.</p></div>
+        </li>
+        <li class="flex gap-3.5 sm:block">
+          <span class="font-mono text-[13px] text-accent shrink-0 sm:block sm:mb-2">02</span>
+          <div><h3 class="text-[15px] font-medium text-ink">Paste it above</h3><p class="mt-1 text-[14px] text-ink-muted leading-relaxed">The link is checked as soon as you paste it.</p></div>
+        </li>
+        <li class="flex gap-3.5 sm:block">
+          <span class="font-mono text-[13px] text-accent shrink-0 sm:block sm:mb-2">03</span>
+          <div><h3 class="text-[15px] font-medium text-ink">Download the thumbnail</h3><p class="mt-1 text-[14px] text-ink-muted leading-relaxed">Pick a quality and save it.</p></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="px-5 sm:px-6 py-12 sm:py-14 border-t border-line">
+    <div class="max-w-content mx-auto">
+      <div class="grid grid-cols-2 sm:grid-cols-4 border-t border-l border-linesoft">
+        <div class="border-r border-b border-linesoft px-4 py-5"><h3 class="text-[14.5px] font-medium text-ink">HD Quality</h3><p class="mt-1 text-[13.5px] text-ink-muted leading-relaxed">Get the highest available thumbnail quality.</p></div>
+        <div class="border-r border-b border-linesoft px-4 py-5"><h3 class="text-[14.5px] font-medium text-ink">Fast</h3><p class="mt-1 text-[13.5px] text-ink-muted leading-relaxed">Get results in seconds.</p></div>
+        <div class="border-r border-b border-linesoft px-4 py-5"><h3 class="text-[14.5px] font-medium text-ink">No Account</h3><p class="mt-1 text-[13.5px] text-ink-muted leading-relaxed">No signup required.</p></div>
+        <div class="border-r border-b border-linesoft px-4 py-5"><h3 class="text-[14.5px] font-medium text-ink">Free</h3><p class="mt-1 text-[13.5px] text-ink-muted leading-relaxed">Use the downloader without paying.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPORTED URLS -->
+  <section class="px-5 sm:px-6 py-12 sm:py-14 border-t border-line">
+    <div class="max-w-content mx-auto">
+      <div class="max-w-[640px]">
+        <h2 class="text-[13px] font-medium text-ink-muted uppercase tracking-wide mb-4">Supported YouTube links</h2>
+        <ul class="divide-y divide-linesoft border-t border-b border-linesoft">
+          <li class="flex items-center justify-between gap-4 py-3"><code class="text-[13.5px] font-mono text-ink">youtube.com/watch?v=...</code><span class="text-[13px] text-ink-faint whitespace-nowrap">standard video link</span></li>
+          <li class="flex items-center justify-between gap-4 py-3"><code class="text-[13.5px] font-mono text-ink">youtu.be/...</code><span class="text-[13px] text-ink-faint whitespace-nowrap">shortened link</span></li>
+          <li class="flex items-center justify-between gap-4 py-3"><code class="text-[13.5px] font-mono text-ink">youtube.com/shorts/...</code><span class="text-[13px] text-ink-faint whitespace-nowrap">Shorts link</span></li>
+        </ul>
+        <p class="mt-3 text-[13.5px] text-ink-muted">Paste any of these formats above — the tool detects the video automatically.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEO CONTENT -->
+  <section class="px-5 sm:px-6 py-12 sm:py-14 border-t border-line">
+    <div class="max-w-content mx-auto">
+      <div class="max-w-[640px]">
+        <h2 class="text-xl sm:text-[22px] font-semibold text-ink">Free YouTube Thumbnail Downloader</h2>
+        <div class="mt-5 space-y-6 text-[15px] text-ink-soft leading-relaxed">
+          <div><h3 class="text-[15px] font-medium text-ink mb-1.5">What a YouTube thumbnail is</h3><p>A thumbnail is the still image YouTube shows for a video before it plays — on the homepage, in search results, and in the sidebar of related videos. Creators upload it separately from the video file, usually at 1280 × 720 pixels, and it's often the first thing that decides whether someone clicks.</p></div>
+          <div><h3 class="text-[15px] font-medium text-ink mb-1.5">How to download one</h3><p>Copy the link to any YouTube video or Short, paste it into the box above, and press Get Thumbnail. You'll see the image right away, along with a choice of sizes to save.</p></div>
+          <div><h3 class="text-[15px] font-medium text-ink mb-1.5">How this tool works</h3><p>YouTube stores a video's thumbnail at a predictable web address built from its video ID. This tool reads the ID out of the link you paste and checks which image sizes exist for it, so nothing is uploaded and no video is downloaded — only the image.</p></div>
+          <div><h3 class="text-[15px] font-medium text-ink mb-1.5">Available thumbnail qualities</h3><p>Most videos have four sizes available: HD at 1280 × 720, Standard at 640 × 480, Medium at 480 × 360, and Small at 320 × 180. Older or lower-resolution uploads sometimes don't have an HD version — when that happens, this tool shows the next best size instead of a broken image.</p></div>
+          <div><h3 class="text-[15px] font-medium text-ink mb-1.5">YouTube Shorts support</h3><p>Shorts links work the same way as regular video links. Paste a youtube.com/shorts/ URL and the thumbnail comes back in the same sizes.</p></div>
+          <div><h3 class="text-[15px] font-medium text-ink mb-1.5">Common reasons people download thumbnails</h3><p>Creators pull their own thumbnails for portfolios, video editors reference them while cutting trailers or compilations, and researchers or archivists save them alongside notes on a video. Some people just want a still image for a chat or a slide without screen-recording the player.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="px-5 sm:px-6 py-12 sm:py-14 border-t border-line">
+    <div class="max-w-content mx-auto">
+      <div class="max-w-[640px]">
+        <h2 class="text-xl sm:text-[22px] font-semibold text-ink mb-1">FAQ</h2>
+        <div class="mt-4 divide-y divide-linesoft border-t border-b border-linesoft" id="faqList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MORE TOOLS -->
+  <section id="more-tools" class="px-5 sm:px-6 py-12 sm:py-14 border-t border-line">
+    <div class="max-w-content mx-auto">
+      <h2 class="text-[13px] font-medium text-ink-muted uppercase tracking-wide mb-4">More tools</h2>
+      <ul class="max-w-[640px] divide-y divide-linesoft border-t border-b border-linesoft">
+        <li class="flex items-center justify-between py-3.5"><span class="text-[14.5px] text-ink font-medium">YouTube Thumbnail Downloader</span><a href="#main" class="text-[13px] text-accent hover:text-accent-dark">Open</a></li>
+        <li class="flex items-center justify-between py-3.5"><span class="text-[14.5px] text-ink-faint">YouTube Thumbnail URL</span><span class="text-[12px] text-ink-faint border border-line rounded px-1.5 py-0.5">Coming soon</span></li>
+        <li class="flex items-center justify-between py-3.5"><span class="text-[14.5px] text-ink-faint">Image Downloader</span><span class="text-[12px] text-ink-faint border border-line rounded px-1.5 py-0.5">Coming soon</span></li>
+        <li class="flex items-center justify-between py-3.5"><span class="text-[14.5px] text-ink-faint">Video Tools</span><span class="text-[12px] text-ink-faint border border-line rounded px-1.5 py-0.5">Coming soon</span></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-line">
+  <div class="max-w-content mx-auto px-5 sm:px-6 py-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+      <div>
+        <span class="font-semibold text-[14px] text-ink">SaveitInstant</span>
+        <p class="mt-0.5 text-[13px] text-ink-faint">Get what you need from a link.</p>
+      </div>
+      <nav>
+        <ul class="flex flex-wrap gap-x-5 gap-y-2">
+          <li><a href="#" class="text-[13px] text-ink-muted hover:text-ink">Home</a></li>
+          <li><a href="#how-it-works" class="text-[13px] text-ink-muted hover:text-ink">How It Works</a></li>
+          <li><a href="#more-tools" class="text-[13px] text-ink-muted hover:text-ink">Tools</a></li>
+          <li><a href="#faq" class="text-[13px] text-ink-muted hover:text-ink">FAQ</a></li>
+          <li><a href="#" class="text-[13px] text-ink-muted hover:text-ink">Privacy</a></li>
+          <li><a href="#" class="text-[13px] text-ink-muted hover:text-ink">Terms</a></li>
+          <li><a href="#" class="text-[13px] text-ink-muted hover:text-ink">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="mt-6 text-[12px] text-ink-faint">This independent tool is not affiliated with YouTube or Google.</p>
+  </div>
+</footer>
+
+<script>
+  // ---- mobile menu ----
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => {
+    const isOpen = !mobileMenu.classList.contains('hidden');
+    mobileMenu.classList.toggle('hidden');
+    menuBtn.setAttribute('aria-expanded', String(!isOpen));
+  });
+
+  // ---- FAQ ----
+  const FAQS = [
+    ['What is a YouTube thumbnail?', "It's the preview image YouTube displays for a video before it's played, usually 1280 × 720 pixels."],
+    ['How do I download a YouTube thumbnail?', 'Paste the video or Shorts link into the box at the top of this page and press Get Thumbnail. Then choose a size and click Download.'],
+    ['Can I download HD YouTube thumbnails?', 'Yes, when the uploader provided one. If a video has no HD thumbnail, this tool shows the next best available size instead.'],
+    ['Can I download thumbnails from YouTube Shorts?', 'Yes. Shorts links (youtube.com/shorts/...) work the same as regular video links.'],
+    ['Do I need to install anything?', 'No. It runs in your browser — nothing to install and nothing to sign up for.'],
+    ['Is the downloader free?', 'Yes, it costs nothing to use.'],
+    ['Do I need an account?', 'No account or login is required.'],
+  ];
+  const faqList = document.getElementById('faqList');
+  FAQS.forEach(([q, a]) => {
+    const d = document.createElement('details');
+    d.className = 'group py-4';
+    d.innerHTML = `
+      <summary class="flex items-center justify-between gap-4 cursor-pointer list-none text-[15px] font-medium text-ink">
+        ${q}
+        <svg class="chev shrink-0 text-ink-faint" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <p class="mt-2.5 text-[14.5px] text-ink-muted leading-relaxed pr-6">${a}</p>`;
+    faqList.appendChild(d);
+  });
+
+  // ---- YouTube URL utils ----
+  const HOSTS = ['youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtu.be'];
+  const ID_RE = /^[a-zA-Z0-9_-]{11}$/;
+
+  function parseUrl(raw) {
+    const input = (raw || '').trim();
+    if (!input || input.length > 2048) return null;
+    try {
+      const withProto = /^https?:\/\//i.test(input) ? input : `https://${input}`;
+      return new URL(withProto);
+    } catch { return null; }
+  }
+  function isKnownHost(hostname) {
+    const h = hostname.toLowerCase().replace(/^www\./, '');
+    return HOSTS.includes(h);
+  }
+  function idFromUrl(url) {
+    const host = url.hostname.toLowerCase().replace(/^www\./, '');
+    if (host === 'youtu.be') {
+      const id = url.pathname.split('/').filter(Boolean)[0];
+      return id && ID_RE.test(id) ? id : null;
+    }
+    const shorts = url.pathname.match(/^\/shorts\/([a-zA-Z0-9_-]{11})/);
+    if (shorts) return shorts[1];
+    const embed = url.pathname.match(/^\/(embed|v)\/([a-zA-Z0-9_-]{11})/);
+    if (embed) return embed[2];
+    const v = url.searchParams.get('v');
+    if (v && ID_RE.test(v)) return v;
+    return null;
+  }
+  function classify(raw) {
+    const trimmed = (raw || '').trim();
+    if (!trimmed) return { type: 'empty' };
+    const url = parseUrl(raw);
+    if (!url) return { type: 'invalid' };
+    if (!isKnownHost(url.hostname)) return { type: 'unsupported' };
+    const id = idFromUrl(url);
+    if (!id) return { type: 'unsupported' };
+    return { type: 'valid', videoId: id };
+  }
+  function thumbUrls(id) {
+    const base = `https://i.ytimg.com/vi/${id}`;
+    return [
+      { id: 'hd', label: 'HD', dimensions: '1280 × 720', url: `${base}/maxresdefault.jpg` },
+      { id: 'standard', label: 'Standard', dimensions: '640 × 480', url: `${base}/sddefault.jpg` },
+      { id: 'medium', label: 'Medium', dimensions: '480 × 360', url: `${base}/hqdefault.jpg` },
+      { id: 'small', label: 'Small', dimensions: '320 × 180', url: `${base}/mqdefault.jpg` },
+    ];
+  }
+  function checkImageLoads(url, timeout = 6000) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      let done = false;
+      const finish = (v) => { if (!done) { done = true; resolve(v); } };
+      const t = setTimeout(() => finish(false), timeout);
+      img.onload = () => { clearTimeout(t); finish(img.naturalWidth > 120); };
+      img.onerror = () => { clearTimeout(t); finish(false); };
+      img.src = url;
+    });
+  }
+  async function downloadImage(url, filename) {
+    try {
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) throw new Error('fail');
+      const blob = await res.blob();
+      const obj = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = obj; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(obj);
+    } catch {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  // ---- wiring ----
+  const form = document.getElementById('toolForm');
+  const input = document.getElementById('urlInput');
+  const inputWrap = document.getElementById('inputWrap');
+  const submitBtn = document.getElementById('submitBtn');
+  const submitLabel = document.getElementById('submitLabel');
+  const submitIcon = document.getElementById('submitIcon');
+  const hintText = document.getElementById('hintText');
+  const errorText = document.getElementById('errorText');
+  const resultSection = document.getElementById('resultSection');
+  const previewImg = document.getElementById('previewImg');
+  const resList = document.getElementById('resList');
+  const copyBtn = document.getElementById('copyBtn');
+  const copyLabel = document.getElementById('copyLabel');
+
+  const ERR = {
+    invalid: 'Enter a valid YouTube URL.',
+    unsupported: 'Please enter a YouTube video or Shorts link.',
+    network: 'Something went wrong. Please try again.',
+  };
+
+  function setError(msg) {
+    if (msg) {
+      hintText.classList.add('hidden');
+      errorText.textContent = msg;
+      errorText.classList.remove('hidden');
+      inputWrap.classList.add('border-error');
+      inputWrap.classList.remove('border-line');
+    } else {
+      hintText.classList.remove('hidden');
+      errorText.classList.add('hidden');
+      inputWrap.classList.remove('border-error');
+      inputWrap.classList.add('border-line');
+    }
+  }
+
+  function setLoading(isLoading) {
+    submitBtn.disabled = isLoading;
+    submitBtn.classList.toggle('opacity-60', isLoading);
+    submitLabel.textContent = isLoading ? 'Fetching...' : 'Get Thumbnail';
+    submitIcon.outerHTML = isLoading
+      ? '<svg id="submitIcon" class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>'
+      : '<svg id="submitIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+  }
+
+  function renderResult(videoId, thumbs, previewUrl) {
+    previewImg.src = previewUrl;
+    previewImg.alt = `YouTube video thumbnail for ${videoId}`;
+    resList.innerHTML = '';
+    thumbs.forEach((t, i) => {
+      const li = document.createElement('li');
+      li.className = `grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] items-center gap-2 sm:gap-4 px-4 py-3 ${i !== thumbs.length - 1 ? 'border-b border-linesoft' : ''} ${t.id === 'hd' ? 'bg-accent-light/40' : ''}`;
+      li.innerHTML = `
+        <div class="flex items-center gap-2">
+          <span class="text-[14px] font-medium text-ink">${t.label}</span>
+          ${t.id === 'hd' ? '<span class="text-[10.5px] font-medium text-accent-dark bg-accent-light px-1.5 py-0.5 rounded">Best</span>' : ''}
+        </div>
+        <span class="text-[13.5px] font-mono text-ink-muted">${t.dimensions}</span>
+        <div class="sm:justify-self-end">
+          <button data-url="${t.url}" data-name="${videoId}-${t.id}.jpg" class="dl-btn ${t.id === 'hd' ? 'w-full sm:w-auto h-9 px-4 text-paper bg-accent hover:bg-accent-dark' : 'h-8 px-3 text-ink-soft border border-line hover:bg-linesoft'} inline-flex items-center justify-center gap-1.5 text-[13px] font-medium rounded-md transition-colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/></svg>
+            Download
+          </button>
+        </div>`;
+      resList.appendChild(li);
+    });
+    resultSection.classList.remove('hidden');
+
+    resList.querySelectorAll('.dl-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const original = btn.innerHTML;
+        btn.innerHTML = '<svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Download';
+        await downloadImage(btn.dataset.url, btn.dataset.name);
+        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Downloaded';
+        setTimeout(() => { btn.innerHTML = original; }, 1600);
+      });
+    });
+
+    copyBtn.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(previewUrl);
+        copyLabel.textContent = 'Copied';
+        setTimeout(() => { copyLabel.textContent = 'Copy image URL'; }, 1600);
+      } catch {}
+    };
+
+    if (window.innerWidth < 640) {
+      requestAnimationFrame(() => resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    }
+  }
+
+  async function runFetch(videoId) {
+    setLoading(true);
+    resultSection.classList.add('hidden');
+    const thumbs = thumbUrls(videoId);
+    const standard = thumbs.find(t => t.id === 'standard');
+    const hd = thumbs.find(t => t.id === 'hd');
+    const [standardOk, hdOk] = await Promise.all([checkImageLoads(standard.url), checkImageLoads(hd.url)]);
+    setLoading(false);
+
+    if (!standardOk) { setError(ERR.network); return; }
+
+    const available = hdOk ? thumbs : thumbs.filter(t => t.id !== 'hd');
+    const previewUrl = hdOk ? hd.url : standard.url;
+    setError(null);
+    renderResult(videoId, available, previewUrl);
+  }
+
+  function handleSubmit(overrideValue) {
+    const val = overrideValue !== undefined ? overrideValue : input.value;
+    const c = classify(val);
+    if (c.type === 'empty' || c.type === 'invalid') { setError(ERR.invalid); resultSection.classList.add('hidden'); return; }
+    if (c.type === 'unsupported') { setError(ERR.unsupported); resultSection.classList.add('hidden'); return; }
+    runFetch(c.videoId);
+  }
+
+  form.addEventListener('submit', (e) => { e.preventDefault(); handleSubmit(); });
+  input.addEventListener('input', () => setError(null));
+  input.addEventListener('paste', (e) => {
+    const text = e.clipboardData.getData('text');
+    if (text) setTimeout(() => { input.value = text; handleSubmit(text); }, 0);
+  });
+  document.getElementById('pasteBtn').addEventListener('click', async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) { input.value = text; setError(null); }
+      input.focus();
+    } catch { input.focus(); }
+  });
+</script>
+</body>
+</html>
